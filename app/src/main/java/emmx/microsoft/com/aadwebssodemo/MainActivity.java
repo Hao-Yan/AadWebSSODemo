@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     private Button mAadSignInButton;
+    private Button mAadSignOutButton;
     private Button mDCTButton;
     private Button mUrlButton;
 
@@ -29,30 +31,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mDCTButton = (Button)findViewById(R.id.buttonUrl);
+        mAadSignOutButton = (Button)findViewById(R.id.buttonAadSignOut);
+        mAadSignOutButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                SignInManager.getInstance().signOut();
+            }
+        });
+
+        mDCTButton = (Button)findViewById(R.id.buttonDCT);
         mDCTButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                SSOHandler.getInstance(getApplicationContext()).start(new SSOHandler.SSOCallback() {
+                SSOHandler.getInstance().start(new SSOHandler.SSOCallback() {
                     @Override
                     public boolean onSuccess(String accessToken) {
-                        return false;
+                        if (!TextUtils.isEmpty(accessToken)) {
+                            SignInManager.getInstance().saveDCTToken(accessToken);
+                        }
+                        return true;
                     }
 
                     @Override
                     public boolean onFailure() {
-                        return false;
+                        return true;
                     }
 
                     @Override
                     public boolean onLoudPrompt() {
-                        return false;
+                        return true;
                     }
 
                     @Override
                     public boolean afterLoudPrompt() {
-                        return false;
+                        return true;
                     }
                 });
             }
@@ -68,5 +82,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        updateButtons();
+    }
+
+    @Override
+    public void onResume() {
+        updateButtons();
+        super.onResume();
+    }
+
+    private void updateButtons() {
+        if (SignInManager.getInstance().hasUserSignedIn()) {
+            mAadSignInButton.setVisibility(View.GONE);
+            mAadSignOutButton.setVisibility(View.VISIBLE);
+        } else {
+            mAadSignInButton.setVisibility(View.VISIBLE);
+            mAadSignOutButton.setVisibility(View.GONE);
+        }
     }
 }

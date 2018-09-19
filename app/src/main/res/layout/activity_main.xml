@@ -11,6 +11,12 @@
         android:text="Sign IN AAD" />
 
     <Button
+        android:id="@+id/buttonAadSignOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign OUT AAD" />
+
+    <Button
         android:id="@+id/buttonDCT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

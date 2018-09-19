@@ -33,7 +33,7 @@ public class AadActivity extends Activity{
         super.onCreate(savedInstanceState);
 
         AuthenticationSettings.INSTANCE.setUseBroker(true);
-        mContext = new AuthenticationContext(AadActivity.this, Constants.AAD_AUTHORITY_URL, true);
+        mContext = new AuthenticationContext(getApplicationContext(), Constants.AAD_AUTHORITY_URL, true);
 
         if (savedInstanceState != null) {
             return;
@@ -177,6 +177,7 @@ public class AadActivity extends Activity{
                 // request is successful
                 Log.d(TAG, "Status:" + result.getStatus() + " Expired:"
                         + result.getExpiresOn().toString());
+                finish();
             }
         }
     }

@@ -1,22 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'rubydebugkey'
+            keyPassword 'rubydebug'
+            storeFile file('/home/hayan/src/AadWebSSODemo/app/ruby-debug.keystore')
+            storePassword 'rubydebug'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
-        applicationId "emmx.microsoft.com.aadwebssodemo"
-        minSdkVersion 15
+        //applicationId "emmx.microsoft.com.aadwebssodemo"
+        applicationId "com.microsoft.emmx.development"
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     buildToolsVersion '27.0.3'
+    productFlavors {
+    }
 }
 
 dependencies {

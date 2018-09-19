@@ -1,6 +1,5 @@
 package emmx.microsoft.com.aadwebssodemo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -17,8 +16,6 @@ public class SSOHandler {
     private static AtomicBoolean sInProgress = new AtomicBoolean(false);
     private static SSOCallback sCallback;
 
-    private static Context sApplicationContext;
-
     private AuthenticationContext mAuthContext;
     private String mAuthority;
     private String mClientId;
@@ -30,7 +27,7 @@ public class SSOHandler {
         mAuthority = Constants.AAD_AUTHORITY_URL;
         mClientId = Constants.AAD_CLIENT_ID;
         mAuthContext = new AuthenticationContext(
-                sApplicationContext,
+                ContextUtils.getApplicationContext(),
                 mAuthority, false);
         mRedirectUri = mAuthContext.getRedirectUriForBroker();
     }
@@ -39,10 +36,7 @@ public class SSOHandler {
         public static final SSOHandler INSTANCE = new SSOHandler();
     }
 
-    public static SSOHandler getInstance(Context applicationContext) {
-        if (sApplicationContext == null) {
-            sApplicationContext = applicationContext;
-        }
+    public static SSOHandler getInstance() {
         return ThreadSafeLazyHolder.INSTANCE;
     }
 
@@ -110,10 +104,10 @@ public class SSOHandler {
             sInProgress.set(false);
             return;
         }
-        Intent intent = new Intent(sApplicationContext, AadActivity.class);
+        Intent intent = new Intent(ContextUtils.getApplicationContext(), AadActivity.class);
         intent.putExtra(AadActivity.EXTRA_TOKEN_REQUEST, AadActivity.DEVICE_CLAIMS);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        sApplicationContext.startActivity(intent);
+        ContextUtils.getApplicationContext().startActivity(intent);
     }
 
     /**

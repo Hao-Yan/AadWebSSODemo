@@ -22,7 +22,7 @@ public class DeviceClaimsTokenAuthCallback implements AuthenticationCallback<Aut
      */
     public DeviceClaimsTokenAuthCallback(Activity activity) {
         mActivity = activity;
-        mSSOHandler = SSOHandler.getInstance(activity.getApplicationContext());
+        mSSOHandler = SSOHandler.getInstance();
     }
 
     @Override

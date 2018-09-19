@@ -4,26 +4,40 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.HashMap;
+
 public class WebViewActivity extends Activity {
+
+    private static final String sCaSSOHeaderName = "x-ms-ManagedBrowserCredential";
+
     private WebView mWebView;
 
     private class MyWebViewClient extends WebViewClient {
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            /*
-            if (Uri.parse(url).getHost().equals("https://www.example.com")) {
-                // This is my website, so do not override; let my WebView load the page
-                return false;
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            // Add Additional headers
+            if (AADUtils.isAADEndpoint(request.getUrl().toString()) && !TextUtils.isEmpty(SignInManager.getInstance().getDeviceClaimToken())) {
+
+                // Is recursive request? (check for our custom headers)
+                if (request.getRequestHeaders() != null && request.getRequestHeaders().containsKey(sCaSSOHeaderName))
+                    return false;
+
+                HashMap<String, String> headers = new HashMap<String, String>();
+                if (request.getRequestHeaders() != null) {
+                    headers.putAll(request.getRequestHeaders());
+                }
+                headers.put(sCaSSOHeaderName, SignInManager.getInstance().getDeviceClaimToken());
+
+                view.loadUrl(request.getUrl().toString(), headers);
+                return true;
             }
-            // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
-            return true;
-            */
+
             return false;
         }
     }
